@@ -1,6 +1,6 @@
 PROJE ÖZETİ
 
-Bu proje, oyuncuların 3D nesneleri (meyveler) alıp sürükleyerek belirli bir platforma yerleştirebildiği basit bir sürükle-bırak oyunudur. Platforma bırakılan nesneler eğer eşleşirse beraber kaybolur ve skor +1 yazılır. Farklı nesne gelirse farklı olan fırlatılır. Projenin ana amacı, kullanıcıların nesneleri 3D bir alanda serbestçe hareket ettirebileceği ve bir platforma düzenli şekilde yerleştirebileceği sezgisel ve görsel açıdan hoş bir deneyim sunmaktır.
+Bu proje, oyuncuların 3D nesneleri (meyveler) alıp sürükleyerek belirli bir platforma yerleştirebildiği basit bir sürükle-bırak oyunudur. Platforma bırakılan nesneler eğer eşleşirse beraber kaybolur ve skor +1 yazılır. Farklı nesne gelirse farklı olan fırlatılır.
 
 
 
