@@ -1,6 +1,5 @@
-using System;
-using TMPro;
 using UnityEngine;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class PlacementPlatform : MonoBehaviour
@@ -10,35 +9,76 @@ public class PlacementPlatform : MonoBehaviour
     public TextMeshProUGUI ScoreText;
     public Transform Fruits;
     public GameObject ComplatePanel;
+    public static int TotalScore = 0; // Statik deÄŸiÅŸkenle toplam skor
+    private int matchCount = 0; // EÅŸleÅŸme sayÄ±sÄ±
+    public int totalPairs = 7; // Toplam Ã§ift sayÄ±sÄ± (senin durumunda 7)
 
     [Header("Particles & Skills")]
-    public ParticleSystem matchParticleEffect; // Eşleşme sırasında patlatmak için
+    public ParticleSystem matchParticleEffect;
 
-    // Örnek: Skill 2 için ayrı bir particle ya da mekanik ekleyebilirsin
-    // public ParticleSystem secondSkillParticle;
+    // ğŸ”¥ **2X Skor iÃ§in deÄŸiÅŸkenler**
+    private bool isDoubleScoreActive = false;
+    private int scoreMultiplier = 1; // BaÅŸlangÄ±Ã§ta normal skor
 
-    /// <summary>
-    /// Skoru sıfırlayıp oyunu yeniden başlatmak veya
-    /// istediğin başka bir reset senaryosunu çalıştırmak için.
-    /// Bunu bir UI butonundan çağırabilirsin.
-    /// </summary>
+    void OnGUI()
+    {
+        // 2X Skor Butonu
+        GUIStyle guiStyle = new GUIStyle(GUI.skin.button);
+        guiStyle.fontSize = 30;
+
+        if (GUI.Button(new Rect(50, 50, 150, 50), "2X Skor", guiStyle))
+        {
+            isDoubleScoreActive = true;
+            scoreMultiplier = 2; // 2X Skor Aktif
+        }
+    }
+
+    public void AddScore()
+    {
+        // Skor ekle
+        Score += 1 * scoreMultiplier;
+        ScoreText.text = $"Score: {Score}";
+
+        // EÅŸleÅŸme sayÄ±sÄ±nÄ± artÄ±r
+        matchCount++;
+
+        // EÄŸer tÃ¼m Ã§iftler eÅŸleÅŸmiÅŸse
+        if (matchCount == totalPairs)
+        {
+            TotalScore = Score; // Skoru sakla
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Sahneyi yeniden baÅŸlat
+        }
+
+        // Skor Ã§arpanÄ±nÄ± sÄ±fÄ±rla
+        scoreMultiplier = 1;
+        isDoubleScoreActive = false;
+    }
+
+
     public void ResetGame()
     {
-        // Skor sıfırla
         Score = 0;
         ScoreText.text = "Score: " + Score;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        // Sahneyi yeniden yükle veya prefabları tekrar spawn et
-        // (Şimdilik sadece sahne reload örneği)
-        // UnityEngine.SceneManagement.SceneManager.LoadScene(
-        //     UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex
-        // );
-
-        // Ya da Fruits childlarını yok edip yeniden yerleştirebilirsin
-        // for (int i = Fruits.childCount - 1; i >= 0; i--)
-        // {
-        //     Destroy(Fruits.GetChild(i).gameObject);
-        // }
-        // Yeniden spawn...
     }
+    private void Update()
+    {
+        // EÄŸer sahnede hiÃ§ meyve kalmadÄ±ysa
+        if (Fruits.childCount == 0)
+        {
+            // Mevcut skoru statik deÄŸiÅŸkende sakla
+            TotalScore = Score;
+
+            // Sahneyi yeniden yÃ¼kle
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+    }
+    private void Start()
+    {
+        // Skoru geri yÃ¼kle
+        Score = TotalScore;
+        ScoreText.text = $"Score: {Score}";
+    }
+
+
 }

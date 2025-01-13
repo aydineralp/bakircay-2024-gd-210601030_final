@@ -95,7 +95,7 @@ public class MovableItem : MonoBehaviour
 
         offset = new Vector3(rawOffset.x, 0f, rawOffset.z);
     }
-
+    public ParticleSystem dragEffect;
     private void OnMouseDrag()
     {
         if (isDragging)
@@ -113,13 +113,19 @@ public class MovableItem : MonoBehaviour
 
             // Kinematik bir rigidbody'yi MovePosition ile taşıyabiliriz
             rb.MovePosition(currentPosition);
+
+            // 🌀 **Sürükleme sırasında efekti başlat**
+            if (dragEffect && !dragEffect.isPlaying)
+            {
+                dragEffect.Play();
+            }
         }
     }
+
 
     private void OnMouseUp()
     {
         isDragging = false;
-        // Kinematikten çıkmadan önce velocity uygulayacaksak burada yapabiliriz
         rb.isKinematic = false;
 
         // Fiziksel hızını kontrol et
@@ -129,7 +135,14 @@ public class MovableItem : MonoBehaviour
             newVelocity = newVelocity.normalized * flingMaxSpeed;
         }
         rb.linearVelocity = newVelocity;
+
+        // 🚫 **Sürükleme bittiğinde efekti durdur**
+        if (dragEffect && dragEffect.isPlaying)
+        {
+            dragEffect.Stop();
+        }
     }
+
 
     private void OnTriggerEnter(Collider other)
     {
@@ -143,7 +156,7 @@ public class MovableItem : MonoBehaviour
             }
             else if (_sp.CurrentFruit != this && _sp.CurrentFruit.FruitName == this.FruitName)
             {
-                // Eşleşme durumu
+                // 🟢 Eşleşme Durumu
                 if (myAnimator != null)
                     myAnimator.SetTrigger("OnMatch");
 
@@ -158,41 +171,34 @@ public class MovableItem : MonoBehaviour
 
                 _sp.CurrentFruit = null;
 
-                _sp.Score += 1;
-                _sp.ScoreText.text = $"Score: {_sp.Score}";
+                // Skoru artır ve eşleşme sayısını kontrol et
+                _sp.AddScore();
 
-                // İsteğe bağlı: Eşleşme particles
+                // Eşleşme efekti
                 if (_sp.matchParticleEffect)
                 {
-                    Instantiate(_sp.matchParticleEffect, transform.position, Quaternion.identity);
+                    ParticleSystem effect = Instantiate(_sp.matchParticleEffect, transform.position, Quaternion.identity);
+                    effect.Play();
+                    Destroy(effect.gameObject, 2f);
                 }
+
+                // Meyveleri yok et
+                Destroy(gameObject);
+                Destroy(_sp.CurrentFruit.gameObject);
             }
             else if (_sp.CurrentFruit != this && _sp.CurrentFruit.FruitName != this.FruitName)
             {
-                // Eşleşme yoksa, geri gitmeli (isBack = true)
+                // ❌ Eşleşme yoksa geri git
                 isBack = true;
-                // Kinematik yapmadan önce velocity’yi sakla ve azalt
                 velocityBeforeKinematic = rb.linearVelocity * backForceMultiplier;
-
                 rb.isKinematic = true;
-                // Diğer bir skill/paticle burada da kullanılabilir.
             }
-        }
-
-        if (other.transform.name == "Destory Trigger Area")
-        {
-            Destroy(gameObject);
-            if (_sp.Fruits.childCount <= 1)
-            {
-                _sp.ComplatePanel.SetActive(true);
-            }
-        }
-
-        if (other.transform.name == "WrongFallArea")
-        {
-            transform.position = fallposition;
         }
     }
+
+
+
+
 
     private void OnTriggerExit(Collider other)
     {
