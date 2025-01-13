@@ -2,6 +2,8 @@ PROJE ÖZETİ
 
 Bu proje, oyuncuların 3D nesneleri (meyveler) alıp sürükleyerek belirli bir platforma yerleştirebildiği basit bir sürükle-bırak oyunudur. Platforma bırakılan nesneler eğer eşleşirse beraber kaybolur ve skor +1 yazılır. Farklı nesne gelirse farklı olan fırlatılır. 
 Oyun esnasında reset butonuna tıklandığında tüm nesneler tekrar orta alanda toplanır, skor sıfırlanır ve oyun baştan başlar.
+Kullanıcı 2X'e tıkladığı zaman bir sonraki eşleşmede 2 katı skor kazanır.
+
 
 
 
